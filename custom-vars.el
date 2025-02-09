@@ -25,3 +25,9 @@
 ;; Revert buffers when the underlying file has changed
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-bufferst 1)
+
+;; set modus theme optinons
+(setq modus-themes-mode-line '(borderless accented padded))
+(setq modus-themes-region '(bg-only))
+
+(load-theme 'modus-vivendi t)
