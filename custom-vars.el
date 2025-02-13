@@ -26,6 +26,9 @@
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-bufferst 1)
 
+;; setup windmove
+(windmove-default-keybindings 'meta)
+
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; configure package management
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -118,13 +121,13 @@
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-syntax '(alt-syntax faint))
 
-;; (setq modus-themes-common-palette-overrides 1)
-;; (setq modus-themes-preset-overrides-intense 1)
-;; (setq modus-themes-completion 'opinionated)
+(setq modus-themes-common-palette-overrides 
+      modus-themes-preset-overrides-intense)
+(setq modus-themes-completion 'opinionated)
 
 ;; ;; all modus theme cusomizations must be done before the theme is loaded
 ;; ;;(load-theme 'modus-vivendi t)
-(load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi-tinted t)
 
 ;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
@@ -137,6 +140,11 @@
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :ensure t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Configure magit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package magit)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure Python IDE
