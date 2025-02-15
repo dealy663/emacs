@@ -4,9 +4,6 @@
 (setq inhibit-startup-message t
       visible-bell t)
 
-;; prep for straight.el later
-(setq package-enable-at-startup nil)
-
 ;; Turn off some unneeded UI elements
 (menu-bar-mode -1)  ; Leave this one on if you're a beginner!
 (tool-bar-mode -1)
@@ -29,28 +26,8 @@
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-bufferst 1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; set modus theme optinons
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require-theme 'modus-themes)
-
-(setq modus-themes-mode-line '(borderless accented padded))
-(setq modus-themes-region '(bg-only))
-(setq modus-themes-bold-constructs t
-      modus-themes-italic-constructs t
-      modus-themes-paren-match '(bold intense underline))
-(setq modus-themes-italic-constructs t)
-(setq modus-themes-syntax '(alt-syntax faint))
-
-(setq modus-themes-common-palette-overrides 1)
-(setq modus-themes-preset-overrides-intense 1)
-(setq modus-themes-completion 'opinionated)
-
-;; ;; all modus theme cusomizations must be done before the theme is loaded
-;; ;;(load-theme 'modus-vivendi t)
-(load-theme 'modus-vivendi t)
-
-;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
+;; setup windmove
+(windmove-default-keybindings 'meta)
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; configure package management
@@ -67,6 +44,7 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
+
 
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; use some packages
@@ -127,6 +105,34 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(straight-use-package 'modus-themes)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; set modus theme optinons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(modus-themes-load-themes)
+;;(require-theme 'modus-themes :no-confirm)
+
+(setq modus-themes-mode-line '(borderless accented padded))
+(setq modus-themes-region '(bg-only))
+(setq modus-themes-bold-constructs t
+      modus-themes-italic-constructs t
+      modus-themes-paren-match '(bold intense underline))
+(setq modus-themes-italic-constructs t)
+(setq modus-themes-syntax '(alt-syntax faint))
+
+(setq modus-themes-common-palette-overrides
+      '((bg-mode-line-active bg-inactive)))
+
+(setq modus-themes-preset-overrides-intense 1)
+(setq modus-themes-completion 'opinionated)
+
+;; all modus theme cusomizations must be done before the theme is loaded
+(load-theme 'modus-vivendi-deuteranopia :no-confirm)
+;;(load-theme 'modus-vivendi-tinted t)
+;;(modus-themes-load-theme 'modus-vivendi)
+
+;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure co-pilot integration
@@ -137,6 +143,11 @@
 (use-package copilot
   :straight (:host github :repo "copilot-emacs/copilot.el" :files ("*.el"))
   :ensure t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Configure magit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package magit)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure Python IDE
@@ -152,6 +163,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes
+   '("fbf73690320aa26f8daffdd1210ef234ed1b0c59f3d001f342b9c0bbf49f531c" "2e7dc2838b7941ab9cabaa3b6793286e5134f583c04bde2fba2f4e20f2617cf7" default))
  '(package-selected-packages '(editorconfig python-mode)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
