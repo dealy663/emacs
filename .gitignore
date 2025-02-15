@@ -1,5 +1,7 @@
 auto-save-list/
 eln-cache/
+elpa/
+straight/
 history
 places
 recentf
