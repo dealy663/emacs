@@ -122,14 +122,16 @@
 (setq modus-themes-syntax '(alt-syntax faint))
 
 (setq modus-themes-common-palette-overrides
-      '((bg-mode-line-active bg-inactive)))
+      '((bg-mode-line-active bg-inactive)
+	,@modus-themes-preset-overrides-intense))
 
 (setq modus-themes-preset-overrides-intense 1)
 (setq modus-themes-completion 'opinionated)
 
 ;; all modus theme cusomizations must be done before the theme is loaded
 (load-theme 'modus-vivendi-deuteranopia :no-confirm)
-;;(load-theme 'modus-vivendi-tinted t)
+;;(load-theme 'modus-vivendi-tritanopia :no-confirm)
+;;(load-theme 'modus-vivendi :no-confirm)
 ;;(modus-themes-load-theme 'modus-vivendi)
 
 ;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
