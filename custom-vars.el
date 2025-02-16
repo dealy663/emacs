@@ -26,29 +26,6 @@
 (global-auto-revert-mode 1)
 (setq global-auto-revert-non-file-bufferst 1)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; set modus theme optinons
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require-theme 'modus-themes)
-
-(setq modus-themes-mode-line '(borderless accented padded))
-(setq modus-themes-region '(bg-only))
-(setq modus-themes-bold-constructs t
-      modus-themes-italic-constructs t
-      modus-themes-paren-match '(bold intense underline))
-(setq modus-themes-italic-constructs t)
-(setq modus-themes-syntax '(alt-syntax faint))
-
-(setq modus-themes-common-palette-overrides 1)
-(setq modus-themes-preset-overrides-intense 1)
-(setq modus-themes-completion 'opinionated)
-
-;; ;; all modus theme cusomizations must be done before the theme is loaded
-;; ;;(load-theme 'modus-vivendi t)
-(load-theme 'modus-vivendi t)
-
-;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
-
 ;; setup windmove
 (windmove-default-keybindings 'meta)
 
@@ -127,6 +104,34 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(straight-use-package 'modus-themes)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; set modus theme optinons
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;(modus-themes-load-themes)
+;;(require-theme 'modus-themes)
+
+(setq modus-themes-mode-line '(borderless accented padded))
+(setq modus-themes-region '(bg-only))
+(setq modus-themes-bold-constructs t
+      modus-themes-italic-constructs t
+      modus-themes-paren-match '(bold intense underline))
+(setq modus-themes-italic-constructs t)
+(setq modus-themes-syntax '(alt-syntax faint))
+
+(setq modus-themes-common-palette-overrides
+      '((bg-mode-line-active bg-inactive)
+        ,@modus-themes-preset-overrides-intense))
+
+(setq modus-themes-preset-overrides-intense 1)
+(setq modus-themes-completion 'opinionated)
+
+;; ;; all modus theme cusomizations must be done before the theme is loaded
+;; ;;(load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi-deuteranopia :no-confirm)
+
+;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure co-pilot integration
