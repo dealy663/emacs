@@ -104,6 +104,7 @@
   (load bootstrap-file nil 'nomessage))
 
 (straight-use-package 'use-package)
+(straight-use-package 'modus-themes)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set modus theme optinons
@@ -111,7 +112,7 @@
 ;; (use-package modus-themes
 ;;   :init)
 
-(require-theme 'modus-themes)
+;; (require-theme 'modus-themes)
 
 (setq modus-themes-mode-line '(borderless accented padded))
 (setq modus-themes-region '(bg-only))
@@ -121,13 +122,18 @@
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-syntax '(alt-syntax faint))
 
-(setq modus-themes-common-palette-overrides 
-      modus-themes-preset-overrides-intense)
+(setq modus-themes-common-palette-overrides
+      '((bg-mode-line-active bg-inactive)
+        ,@modus-themes-preset-overrides-intense))
+
+;; (setq modus-themes-common-palette-overrides 
+;;       modus-themes-preset-overrides-intense)
+(setq modus-themes-preset-overrides-intense 1)
 (setq modus-themes-completion 'opinionated)
 
 ;; ;; all modus theme cusomizations must be done before the theme is loaded
 ;; ;;(load-theme 'modus-vivendi t)
-(load-theme 'modus-vivendi-tinted t)
+(load-theme 'modus-vivendi-deuteranopia :no-confirm)
 
 ;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
