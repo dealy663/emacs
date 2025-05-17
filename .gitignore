@@ -3,6 +3,12 @@ eln-cache/
 elpa/
 straight/
 transient/
+<<<<<<< HEAD
+=======
+.cache/
+request/
+tutorial/
+>>>>>>> origin/memphis
 history
 places
 recentf
