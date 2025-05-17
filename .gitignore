@@ -6,6 +6,8 @@ transient/
 history
 places
 recentf
+.cache/
+request/
 
 *~
 *#
