@@ -7,6 +7,9 @@
 ;; prep for straight.el later
 (setq package-enable-at-startup nil)
 
+;; set option key on mac to be meta
+(setq mac-option-modifier 'meta)
+
 ;; Turn off some unneeded UI elements
 (menu-bar-mode -1)  ; Leave this one on if you're a beginner!
 (tool-bar-mode -1)
