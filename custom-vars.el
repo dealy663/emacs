@@ -193,6 +193,9 @@
 (global-tree-sitter-mode)
 (add-hook 'tree-sitter-after-on-hook #'tree-sitter-hl-mode)
 
+;; cargo-minor-mode isn't working for some reason
+;(add-hook 'rust-mode-hook 'cargo-minor-mode)
+
 ;; customs after use package
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
