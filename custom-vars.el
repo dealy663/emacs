@@ -4,8 +4,6 @@
 (setq inhibit-startup-message t
       visible-bell t)
 
-;; prep for straight.el later
-(setq package-enable-at-startup nil)
 
 ;; set option key on mac to be meta
 (setq mac-option-modifier 'meta)
@@ -55,22 +53,9 @@
 
 ;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; ;; configure package management
-;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require 'package)
-
-(setq package-archives '(("melpa" . "https://melpa.org/packages/")
-			 ("org" . "https://orgmode.org/elpa/")
-			 ("elpa" . "https://elpa.gnu.org/packages/")))
-
-(package-initialize)
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-
-(require 'use-package)
-(setq use-package-always-ensure t)
-
+;; package.el disabled — straight.el manages packages instead
+;; (see early-init.el for package-enable-at-startup nil)
+(setq straight-use-package-by-default t)
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ;; use some packages
 ;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -142,6 +127,12 @@
   :ensure t)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Configure Magit
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package magit
+  :bind ("C-x g" . magit-status))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure Python IDE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package python-mode
@@ -149,16 +140,32 @@
   :custom
   (python-shell-interpreter "python3"))
 
-;; customs after use package
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(editorconfig python-mode)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+(custom-set-faces)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Configure Claude integration 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; --- 1. Package Infrastructure (Straight / use-package) ---
+(use-package gptel
+  :ensure t
+  :config
+  (setq gptel-model 'claude-3-5-sonnet-latest ; Default to Claude 3.5 Sonnet
+        gptel-backend (gptel-make-anthropic "Claude" :key (getenv "ANTHROPIC_API_KEY"))))
+
+;; --- 2. MCP Hub & Client Integration ---
+;; Manages external tool servers (filesystem, bash, code lenses)
+(use-package mcp-hub
+  :straight (:host github :repo "lizqwerscott/mcp.el")
+  :config
+  (setq mcp-hub-servers
+        `(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(expand-file-name "~"))))
+          ("bash-runner" . (:command "uvx" :args ("mcp-server-bash")))))
+  (mcp-hub-start-all-server))
+
+;; --- 3. Pure Elisp Emacs MCP Server ---
+;; Exposes Emacs internal context (Python/C++ open buffers, project trees) to Claude
+(use-package mcp-server
+  :straight (:host github :repo "rhblind/emacs-mcp-server"
+             :files ("*.el" "tools/*.el"))
+  :config
+  (mcp-server-start-unix)) 
