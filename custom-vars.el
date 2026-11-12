@@ -1,4 +1,4 @@
-;; manual config file guided from system crafters
+;; manual config file guided from system crafters  -*- lexical-binding: t; -*-
 
 ;; Don't display startup message
 (setq inhibit-startup-message t
@@ -33,7 +33,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; set modus theme optinons
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(require-theme 'modus-themes)
+;; (require-theme 'modus-themes)
 
 (setq modus-themes-mode-line '(borderless accented padded))
 (setq modus-themes-region '(bg-only))
@@ -43,13 +43,13 @@
 (setq modus-themes-italic-constructs t)
 (setq modus-themes-syntax '(alt-syntax faint))
 
-(setq modus-themes-common-palette-overrides 1)
-(setq modus-themes-preset-overrides-intense 1)
+;; (setq modus-themes-common-palette-overrides 1)
+;; (setq modus-themes-preset-overrides-intense 1)
 (setq modus-themes-completion 'opinionated)
 
-;; ;; all modus theme cusomizations must be done before the theme is loaded
-;; ;;(load-theme 'modus-vivendi t)
-(load-theme 'modus-vivendi t)
+;; ;; ;; all modus theme cusomizations must be done before the theme is loaded
+;; ;; ;;(load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi-deuteranopia t)
 
 ;; (define-key global-map (kbd "<f5>")  #'modus-themes-toggle)
 
@@ -117,6 +117,18 @@
 (straight-use-package 'use-package)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Import shell environment (needed because GUI Emacs launched from the
+;;  Dock/Spotlight is started by launchd, which never sources ~/.zshrc, so
+;;  vars like ANTHROPIC_API_KEY would otherwise be missing)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package exec-path-from-shell
+  :config
+  (dolist (var '("ANTHROPIC_API_KEY" "OPENAI_API_KEY"))
+    (add-to-list 'exec-path-from-shell-variables var))
+  (when (memq window-system '(mac ns x))
+    (exec-path-from-shell-initialize)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure co-pilot integration
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (use-package editorconfig)
@@ -152,29 +164,62 @@
 (add-hook 'c++-ts-mode-hook #'eglot-ensure)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  Configure Rust
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(use-package emacs
+  :init
+  ;; Automatically map Rust files to the native Tree-sitter major mode
+  (add-to-list 'major-mode-remap-alist '(rust-mode . rust-ts-mode))
+  
+  :hook
+  ;; Automatically start the LSP server whenever you open a Rust file
+  (rust-ts-mode . eglot-ensure))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Configure Claude integration 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; --- 1. Package Infrastructure (Straight / use-package) ---
+;; ;; --- 1. Package Infrastructure (Straight / use-package) ---
+;; (use-package gptel
+;;   :ensure t
+;;   :config
+;;   (setq gptel-model 'claude-3-5-sonnet-latest ; Default to Claude 3.5 Sonnet
+;;         gptel-backend (gptel-make-anthropic "Claude" :key (getenv "ANTHROPIC_API_KEY"))))
+
+;; ;; --- 2. MCP Hub & Client Integration ---
+;; ;; Manages external tool servers (filesystem, bash, code lenses)
+;; (use-package mcp-hub
+;;   :straight (:host github :repo "lizqwerscott/mcp.el")
+;;   :config
+;;   (setq mcp-hub-servers
+;;         `(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(expand-file-name "~"))))
+;;           ("bash-runner" . (:command "uvx" :args ("mcp-server-bash")))))
+;;   (mcp-hub-start-all-server))
+
+;; ;; --- 3. Pure Elisp Emacs MCP Server ---
+;; ;; Exposes Emacs internal context (Python/C++ open buffers, project trees) to Claude
+;; (use-package mcp-server
+;;   :straight (:host github :repo "rhblind/emacs-mcp-server"
+;;              :files ("*.el" "tools/*.el"))
+;;   :config
+;;   (mcp-server-start-unix))
+
+;; (use-package gptel
+;;   :config
+;;   (setq gptel-model 'claude-opus-5)
+;;   (gptel-make-anthropic "Claude"
+;;     :stream t
+;;     :key (getenv "ANTHROPIC_API_KEY")))
+
 (use-package gptel
-  :ensure t
   :config
-  (setq gptel-model 'claude-3-5-sonnet-latest ; Default to Claude 3.5 Sonnet
-        gptel-backend (gptel-make-anthropic "Claude" :key (getenv "ANTHROPIC_API_KEY"))))
+  (setq gptel-backend
+        (gptel-make-anthropic "Claude"
+          :stream t
+          :key #'gptel-api-key-from-auth-source))
+  (setq gptel-model 'claude-sonnet-4-6)
+  ;; Visually distinguish Claude's responses from your own input: a
+  ;; background tint on response text plus a margin marker.
+  (setq gptel-highlight-methods '(face margin))
+  (add-hook 'gptel-mode-hook #'gptel-highlight-mode))
 
-;; --- 2. MCP Hub & Client Integration ---
-;; Manages external tool servers (filesystem, bash, code lenses)
-(use-package mcp-hub
-  :straight (:host github :repo "lizqwerscott/mcp.el")
-  :config
-  (setq mcp-hub-servers
-        `(("filesystem" . (:command "npx" :args ("-y" "@modelcontextprotocol/server-filesystem" ,(expand-file-name "~"))))
-          ("bash-runner" . (:command "uvx" :args ("mcp-server-bash")))))
-  (mcp-hub-start-all-server))
-
-;; --- 3. Pure Elisp Emacs MCP Server ---
-;; Exposes Emacs internal context (Python/C++ open buffers, project trees) to Claude
-(use-package mcp-server
-  :straight (:host github :repo "rhblind/emacs-mcp-server"
-             :files ("*.el" "tools/*.el"))
-  :config
-  (mcp-server-start-unix)) 
+(add-hook 'gptel-post-response-functions (lambda (_ _) (goto-char (point-max))))
